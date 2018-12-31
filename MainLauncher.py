@@ -2,7 +2,7 @@
 #from MyPreprocessing import MyPreprocessing
 import pandas as pd
 import numpy as np
-from config_loader import load, clf_names
+from config_loader import load
 import argparse
 import sys
 import seaborn as sns
@@ -37,7 +37,7 @@ def getData(path, filenames_type):
                                        inplace=True)
     #labels = df_features['Survived']
     #df_features = df_features.drop(['Survived'], axis=1)
-    return df_features, labels
+    return df_features
 ##
 if __name__ == '__main__':
     ##
@@ -61,10 +61,10 @@ if __name__ == '__main__':
     if file_type == 'all':
         filename_type = 'other'
 
-    trainX, ytrain = getData(path, filename_type)
+    data = getData(path, filename_type)
 
     ## Data Understanding
-    featureAnalysis(trainX, verbose)
+    featureAnalysis(data, verbose)
     '''
     ## Preprocessing
     preprocess = MyPreprocessing()
