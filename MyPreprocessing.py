@@ -71,6 +71,8 @@ class MyPreprocessing:
             df_reduced.drop(['PassengerId'], axis=1, inplace=True)
         df_reduced.drop(['Name', 'Ticket', 'Cabin'], axis=1, inplace=True)
 
+        # Pclass is ordinal so we convert it in object
+        df_reduced['Pclass'] = df_reduced['Pclass'].astype('object')
         df_num = df_reduced.select_dtypes(exclude='object')
         df_obj = df_reduced.select_dtypes(include='object')
 
@@ -83,22 +85,25 @@ class MyPreprocessing:
             df_normalized = pd.DataFrame(scaled, columns=df_num.columns)
 
         if df_obj.size > 0:
+            '''
+            # Sex is the only column that has 2 values so we can factorize it
+            df_obj['Sex'] = pd.factorize(df_obj['Sex'])[0]
+            sex = pd.DataFrame(df_obj.Sex, columns=['Sex'])
+            df_obj.drop(['Sex'], axis=1, inplace=True)
+            '''
             # replace titles
             df_obj['Title'] = df_obj.apply(self.replace_titles, axis=1)
 
-            # we keep ordinal data so we can apply factorization
-            df_encoded = df_obj.apply(lambda x: pd.factorize(x)[0])
-            '''
+            # we use One-Hot encoding with all the categorical values
+            # Sex won't have 2 columns (1 for male and one for female)
+            # because we use the drop_first option
             df_encoded = pd.get_dummies(df_obj,
-                                        #dummy_na=True,
                                         drop_first=True)
-            '''
-
+            # we convert them in float to avoid a warning
+            df_encoded = df_encoded.astype('float')
             min_max_scaler = preprocessing.MinMaxScaler()
             scaled = min_max_scaler.fit_transform(df_encoded)
             df_encoded = pd.DataFrame(scaled, columns=df_encoded.columns)
-            #df_encoded = df_encoded. astype('object')
-            df_encoded = df_encoded.astype('float')
 
         self.new_df = pd.concat([df_normalized, df_encoded], axis=1, sort=False)
 #
