@@ -73,9 +73,13 @@ if __name__ == '__main__':
     preprocess = MyPreprocessing()
     preprocess.fit(data)
     df = preprocess.new_df
+    # the labels "Survived"
     labels = preprocess.labels_
     print(labels.head())
+    # the initial dataset without any preprocessing
     print(preprocess.df_initial.head())
+    # the preprocessed data
+    print(preprocess.new_df.head())
 
     ##
     start = time()
