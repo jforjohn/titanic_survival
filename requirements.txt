@@ -6,3 +6,4 @@ scipy
 #statsmodels
 #scikit-posthocs
 seaborn
+matplotlib
