@@ -62,24 +62,42 @@ if __name__ == '__main__':
     if file_type == 'all':
         filename_type = 'other'
 
-    data = getData(path, filename_type)
+    print('Filename type:', filename_type)
+    print()
+    ## train
+    trainData = getData(path, filename_type)
+    # Preprocessing
+    trainPreprocess = MyPreprocessing(filename_type)
+
+    ## test
+    filename_type = 'test'
+    testData = getData(path, filename_type)
+    # Preprocessing
+    testPreprocess = MyPreprocessing(filename_type)
 
     ## Data Understanding
     if verbose == 'true':
-        featureAnalysis(data)
+        featureAnalysis(trainData)
+        featureAnalysis(testData)
 
-
-    ## Preprocessing
-    preprocess = MyPreprocessing()
-    preprocess.fit(data)
-    df = preprocess.new_df
+    trainPreprocess.fit(trainData)
+    df_train = trainPreprocess.new_df
     # the labels "Survived"
-    labels = preprocess.labels_
+    labels = trainPreprocess.labels_
     print(labels.head())
     # the initial dataset without any preprocessing
-    print(preprocess.df_initial.head())
+    print(trainPreprocess.df_initial.head())
     # the preprocessed data
-    print(preprocess.new_df.head())
+    print(trainPreprocess.new_df.head())
+
+    testPreprocess.fit(testData)
+    df_test = testPreprocess.new_df
+    print()
+    print('Train set sample')
+    print(df_train.head())
+    print()
+    print('Test set sample')
+    print(df_test.head())
 
     ##
     start = time()

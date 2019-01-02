@@ -7,11 +7,13 @@ import matplotlib.pyplot as plt
 
 
 class MyPreprocessing:
-    def __init__(self, raw=False):
+    def __init__(self, filename_type='all'):
         pd.set_option('display.max_rows', 500)
         pd.set_option('display.max_columns', 500)
         pd.set_option('display.width', 1000)
         pd.options.mode.chained_assignment = None  # default='warn'
+        self.filename_type = filename_type
+
 
 ##
     def handleMissingValues(self, data):
@@ -58,10 +60,12 @@ class MyPreprocessing:
         self.df_initial = self.handleMissingValues(data)
 
         # get label
-        labels = self.df_initial.Survived
-        self.labels_ = labels
-
-        self.df_initial.drop(['Survived'], axis=1, inplace=True)
+        if self.filename_type in ['train', 'all']:
+            labels = self.df_initial.Survived
+            self.labels_ = labels
+            self.df_initial.drop(['Survived'], axis=1, inplace=True)
+        else:
+            self.labels_ = pd.Series()
 
         df_reduced = self.df_initial.copy()
 
