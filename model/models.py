@@ -5,7 +5,7 @@ from model.svm import svm
 from model.random_forest import random_forest
 
 
-def models_perform(data, data_labels):
+def models_perform(data, data_labels, test, test_labels):
 
     # Divide dataset in folds
     kf = KFold(n_splits=5)
@@ -18,25 +18,25 @@ def models_perform(data, data_labels):
     # returns the model trained with the totality of the training data.
     models = list()
     # Multilayer perceptron
-    mlp(data, data_labels, train_idx, validation_idx)
+    models.append(mlp(data, data_labels, train_idx, validation_idx))
     # Support Vector Machine
-    svm(data, data_labels, train_idx, validation_idx)
+    models.append(svm(data, data_labels, train_idx, validation_idx))
     # Random Forest
-    random_forest(data, data_labels, train_idx, validation_idx)
+    models.append(random_forest(data, data_labels, train_idx, validation_idx))
     # XGD Boost
 
     # KNN
 
     # AdaBoost
 
-    #models_compare(models,)
+    models_compare(models, test, test_labels)
 
 
-def models_compare(models, test):
+def models_compare(models, test, test_labels):
     best_model = None
-    best_accuracy = None
+    best_accuracy = 0
     for model in models:
-        accuracy = accuracy_score(test.iloc[:, 0], model.predict(test.iloc[:, 1:]))
+        accuracy = accuracy_score(test_labels, model.predict(test))
         if accuracy > best_accuracy:
             best_accuracy = accuracy
             best_model = model

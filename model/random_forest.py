@@ -15,6 +15,8 @@ def random_forest(data, labels, train_fidx, validation_fidx):
         folds_accuracy.append(accuracy_score(labels.loc[validation_fidx[idx]], prediction_labels))
     print("Random Forest provided", mean(folds_accuracy), "accuracy at validation stage.")
 
+    return rfc.fit(data, labels)
+
 
 def getBest(data, labels, train_fidx, validation_fidx):
     best_accuracy = 0

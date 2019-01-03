@@ -17,6 +17,7 @@ def svm(data, labels, train_fidx, validation_fidx):
         folds_accuracy.append(accuracy_score(labels.loc[validation_fidx[idx]], prediction_labels))
     print("Support Vector Classifier provided", mean(folds_accuracy), "accuracy at validation stage.")
 
+    return svc.fit(data, labels)
 
 configs = [
     {'C': 3, 'kernel': 'linear', 'gamma': 'auto'},

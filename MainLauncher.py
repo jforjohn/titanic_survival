@@ -104,4 +104,9 @@ if __name__ == '__main__':
     ##
     start = time()
 
-    models_perform(df_train, labels)
+    df_test = df_train.iloc[891:]
+    df_train = df_train.iloc[0:890]
+    labels_test = labels.iloc[891:]
+    labels = labels[0:890]
+
+    models_perform(df_train, labels, df_test, labels_test)

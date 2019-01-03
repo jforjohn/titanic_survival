@@ -60,7 +60,7 @@ class MyPreprocessing:
         self.df_initial = self.handleMissingValues(data)
 
         # get label
-        if self.filename_type in ['train', 'all']:
+        if self.filename_type in ['train', 'other']:
             labels = self.df_initial.Survived
             self.labels_ = labels
             self.df_initial.drop(['Survived'], axis=1, inplace=True)

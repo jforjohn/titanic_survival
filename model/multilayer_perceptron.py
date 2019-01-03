@@ -57,6 +57,8 @@ def mlp(data, labels, train_fidx, validation_fidx):
         folds_accuracy.append(accuracy_score(labels.loc[validation_fidx[idx]], prediction_labels))
     print("Multilayer Perceptron provided", mean(folds_accuracy), "accuracy at validation stage.")
 
+    return net.fit(data, labels)
+
 
 def getBest(data, labels, train_fidx, validation_fidx):
     best_accuracy = 0
