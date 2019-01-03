@@ -14,6 +14,8 @@ from time import time
 from sklearn.decomposition import PCA
 from sklearn.decomposition import IncrementalPCA
 import matplotlib.pyplot as plt
+from model.models import models_perform
+
 
 def getData(path, filenames_type):
     '''
@@ -102,4 +104,4 @@ if __name__ == '__main__':
     ##
     start = time()
 
-
+    models_perform(df_train, labels)
