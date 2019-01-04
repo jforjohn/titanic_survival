@@ -50,6 +50,12 @@ class MyFeatureSelection:
         return r
 
     @staticmethod
+    def compute_weights_anova(dataset, labels):
+        r = f_classif(dataset, labels)
+
+        return r
+
+    @staticmethod
     def compute_weights_relief(dataset, labels):
 
         # Relief
