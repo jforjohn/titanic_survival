@@ -7,3 +7,4 @@ scipy
 #scikit-posthocs
 seaborn
 matplotlib
+sklearn_relief
