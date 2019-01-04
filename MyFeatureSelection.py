@@ -15,6 +15,21 @@ class MyFeatureSelection:
         transformed = pca.fit_transform(dataset)
         return transformed
 
+
+    # n is the number of final features
+    @staticmethod
+    def applyLDAReduction(dataset, labels, n):
+        clf = LDA(n_components=n)
+        transformed = clf.fit_transform(dataset, labels)
+        return transformed
+
+    # n is the number of final features
+    @staticmethod
+    def applyQDAReduction(dataset, labels, n):
+        clf = QDA(n_components=n)
+        transformed = clf.fit_transform(dataset, labels)
+        return transformed
+
     @staticmethod
     def InfoGainSelection(dataset, labels, n):
         transformed = SelectKBest(mutual_info_classif, k=n).fit_transform(dataset, labels)
@@ -24,6 +39,15 @@ class MyFeatureSelection:
     def AnovaSelection(dataset, labels, n):
         transformed = SelectKBest(f_classif, k=n).fit_transform(dataset, labels)
         return transformed
+
+        # Compute weights with information gain
+        # train_set and train_labels must be pandas before converting to list for ib
+
+    @staticmethod
+    def compute_weights_info_gain(dataset, labels):
+        r = mutual_info_classif(dataset, labels)
+
+        return r
 
     @staticmethod
     def compute_weights_relief(dataset, labels):
