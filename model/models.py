@@ -5,6 +5,9 @@ from model.svm import svm
 from model.random_forest import random_forest
 from model.k_nearest_neighbors import k_nearest_neighbors
 from model.k_nearest_neighbors import weighted_k_nearest_neighbors
+from model.LDA import LDA
+
+
 
 
 
@@ -32,6 +35,10 @@ def models_perform(data, data_labels, test, test_labels):
     models.append(k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
     # Weighted KNN
     models.append(weighted_k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
+
+    #LDA
+    models.append(LDA(data, data_labels, train_idx, validation_idx))
+
 
     # AdaBoost
 

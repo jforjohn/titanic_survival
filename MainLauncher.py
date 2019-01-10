@@ -8,6 +8,8 @@ import sys
 import seaborn as sns
 from MyDataUnderstanding import featureAnalysis
 from MyPreprocessing import MyPreprocessing
+from MyFeatureSelection import MyFeatureSelection
+
 
 import numpy as np
 from time import time
@@ -82,6 +84,7 @@ if __name__ == '__main__':
         featureAnalysis(trainData)
         featureAnalysis(testData)
 
+
     trainPreprocess.fit(trainData)
     df_train = trainPreprocess.new_df
     # the labels "Survived"
@@ -109,4 +112,53 @@ if __name__ == '__main__':
     labels_test = labels.iloc[891:]
     labels = labels[0:890]
 
+    #warnings.filterwarnings("ignore")
+
+    print('Original')
+    print('##################################')
     models_perform(df_train, labels, df_test, labels_test)
+
+    print('')
+    print('PCA')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        pca_train, pca_test = MyFeatureSelection.applyPCA(df_train, df_test, n_dim)
+        models_perform(pca_train, labels, pca_test, labels_test)
+
+    print('')
+    print('ICA')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim)
+        models_perform(ica_train, labels, ica_test, labels_test)
+
+    print('')
+    print('ICA')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim)
+        models_perform(ica_train, labels, ica_test, labels_test)
+
+    print('')
+    print('INFO GAIN SELECTION')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        ig_train, ig_test = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, n_dim)
+        models_perform(ig_train, labels, ig_test, labels_test)
+
+    print('')
+    print('ANOVA SELECTION')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim)
+        models_perform(an_train, labels, an_test, labels_test)
