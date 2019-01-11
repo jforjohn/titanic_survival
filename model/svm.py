@@ -4,11 +4,10 @@ from statistics import mean
 
 
 def svm(data, labels, train_fidx, validation_fidx):
-    svc = SVC(
-        ''' C=3,
-        kernel='linear',
-        gamma='auto '''
-    )
+    svc = SVC()
+    ''' C=3,
+    kernel='linear',
+    gamma='auto '''
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
         svc.fit(data.loc[trf], labels.loc[trf])

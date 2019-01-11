@@ -43,8 +43,8 @@ def models_perform(data, data_labels, test, test_labels):
     # AdaBoost
 
 
-    models_compare(models, test, test_labels)
 
+    models_compare(models, test, test_labels)
 
 def models_compare(models, test, test_labels):
     best_model = None

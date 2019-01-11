@@ -4,9 +4,8 @@ from statistics import mean
 
 
 def random_forest(data, labels, train_fidx, validation_fidx):
-    rfc = RandomForestClassifier(
-        #n_estimators=10
-    )
+    rfc = RandomForestClassifier()
+    #n_estimators=10
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
         rfc.fit(data.loc[trf], labels.loc[trf])

@@ -42,15 +42,14 @@ configs = [
 
 
 def mlp(data, labels, train_fidx, validation_fidx):
-    net = MLPClassifier(
-        activation='relu',
-        solver='adam'
-        ''',
-        learning_rate_init=0.0001,
-        momentum=0.9,
-        hidden_layer_sizes=(10, 50, 30, 40, 20)
-        '''
-    )
+    net = MLPClassifier(max_iter=1000)
+    '''
+    activation='relu',
+    solver='adam',
+    learning_rate_init=0.0001,
+    momentum=0.9,
+    hidden_layer_sizes=(10, 50, 30, 40, 20)
+    '''
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
         net.fit(data.loc[trf], labels.loc[trf])
