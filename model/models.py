@@ -6,6 +6,7 @@ from model.random_forest import random_forest
 from model.k_nearest_neighbors import k_nearest_neighbors
 from model.k_nearest_neighbors import weighted_k_nearest_neighbors
 from model.LDA import LDA
+from model.xgBoost import xgBoost
 
 
 
@@ -24,13 +25,13 @@ def models_perform(data, data_labels, test, test_labels):
     # returns the model trained with the totality of the training data.
     models = list()
     # Multilayer perceptron
-    models.append(mlp(data, data_labels, train_idx, validation_idx))
+    #models.append(mlp(data, data_labels, train_idx, validation_idx))
     # Support Vector Machine
     models.append(svm(data, data_labels, train_idx, validation_idx))
     # Random Forest
     models.append(random_forest(data, data_labels, train_idx, validation_idx))
-    # XGD Boost
-
+    # XG Boost
+    models.append(xgBoost(data, data_labels, train_idx, validation_idx))
     # KNN
     models.append(k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
     # Weighted KNN
@@ -39,8 +40,8 @@ def models_perform(data, data_labels, test, test_labels):
     #LDA
     models.append(LDA(data, data_labels, train_idx, validation_idx))
 
-
     # AdaBoost
+
 
     models_compare(models, test, test_labels)
 
