@@ -122,7 +122,6 @@ if __name__ == '__main__':
 
     #models_perform(df_train, labels, df_test, labels_test)
     '''
-    '''
     from sklearn.model_selection import KFold, cross_val_predict
     from sklearn.svm import SVC
     from sklearn.metrics import accuracy_score
@@ -265,7 +264,7 @@ if __name__ == '__main__':
          preds_mid2.reshape(-1, 1)], axis=1)
 
     #warnings.filterwarnings("ignore")
-
+    '''
     print('Original')
     print('##################################')
     models_perform(df_train, labels, df_test, labels_test)
