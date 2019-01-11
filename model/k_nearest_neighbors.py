@@ -17,7 +17,7 @@ def k_nearest_neighbors(data, labels, train_fidx, validation_fidx):
     w = MyFeatureSelection.compute_weights_relief(data,labels)
 
     knn = KNeighborsClassifier(
-        n_neighbors=5
+        n_neighbors=13
     )
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
@@ -35,7 +35,7 @@ def weighted_k_nearest_neighbors(data, labels, train_fidx, validation_fidx):
     w = MyFeatureSelection.compute_weights_info_gain(data, labels)
 
     knn = KNeighborsClassifier(
-        n_neighbors=5, metric=mydist, metric_params={"w": w}
+        n_neighbors=9, metric=mydist, metric_params={"w": w}
     )
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
@@ -51,8 +51,8 @@ def weighted_k_nearest_neighbors(data, labels, train_fidx, validation_fidx):
 def getBest(data, labels, train_fidx, validation_fidx):
     best_accuracy = 0
     best_params = None
-    for n_neigh in range(1, 11, 1):
-        rfc = KNeighborsClassifier(
+    for n_neigh in range(1, 29, 1):
+        knn = KNeighborsClassifier(
             n_neighbors=n_neigh
         )
         fold_accuracy_mean = 0
@@ -61,8 +61,34 @@ def getBest(data, labels, train_fidx, validation_fidx):
             folds_accuracy = list()
             for idx, trf in enumerate(train_fidx):
 
-                rfc.fit(data.loc[trf], labels.loc[trf])
-                prediction_labels = rfc.predict(data.loc[validation_fidx[idx]])
+                knn.fit(data.loc[trf], labels.loc[trf])
+                prediction_labels = knn.predict(data.loc[validation_fidx[idx]])
+
+                folds_accuracy.append(accuracy_score(labels.loc[validation_fidx[idx]], prediction_labels))
+            fold_accuracy_mean = max(fold_accuracy_mean, mean(folds_accuracy))
+
+        if fold_accuracy_mean > best_accuracy:
+            best_accuracy = fold_accuracy_mean
+            best_params = {'n_neighbors': n_neigh}
+    print(best_params)
+    print(best_accuracy)
+
+def getBest_weighted(data, labels, train_fidx, validation_fidx):
+    best_accuracy = 0
+    best_params = None
+    w = MyFeatureSelection.compute_weights_relief(data, labels)
+    for n_neigh in range(1, 17, 2):
+        print(n_neigh)
+        knn = KNeighborsClassifier(
+            n_neighbors=n_neigh, metric=mydist, metric_params={"w": w}
+        )
+        fold_accuracy_mean = 0
+        for i in range(0, 1):
+            folds_accuracy = list()
+            for idx, trf in enumerate(train_fidx):
+
+                knn.fit(data.loc[trf], labels.loc[trf])
+                prediction_labels = knn.predict(data.loc[validation_fidx[idx]])
 
                 folds_accuracy.append(accuracy_score(labels.loc[validation_fidx[idx]], prediction_labels))
             fold_accuracy_mean = max(fold_accuracy_mean, mean(folds_accuracy))

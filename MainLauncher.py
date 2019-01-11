@@ -8,6 +8,8 @@ import sys
 import seaborn as sns
 from MyDataUnderstanding import featureAnalysis
 from MyPreprocessing import MyPreprocessing
+from MyFeatureSelection import MyFeatureSelection
+
 
 import numpy as np
 from time import time
@@ -80,6 +82,7 @@ if __name__ == '__main__':
     if verbose == 'true':
         featureAnalysis(trainData)
         featureAnalysis(testData)
+
 
     trainPreprocess.fit(trainData)
     df_train = trainPreprocess.new_df
@@ -210,6 +213,107 @@ if __name__ == '__main__':
     ens_pred_final = np.concatenate(
         [preds_mid1.reshape(-1, 1),
          preds_mid2.reshape(-1, 1)], axis=1)
+
+    from sklearn.ensemble import RandomForestClassifier
+    clf = RandomForestClassifier(
+        n_estimators=10
+    )
+    pred_model4 = clf.fit(df_train, labels).predict(df_test)
+    acc = accuracy_score(labels_test, pred_model4)
+    print(acc)
+    res_model4 = cross_val_predict(clf, df_train, labels, cv=kfold)
+
+    from sklearn.ensemble import GradientBoostingClassifier
+    clf = GradientBoostingClassifier()
+    pred_model5 = clf.fit(df_train, labels).predict(df_test)
+    acc = accuracy_score(labels_test, pred_model5)
+    print(acc)
+    res_model5 = cross_val_predict(clf, df_train, labels, cv=kfold)
+
+    ens_model1 = np.concatenate(
+        [res_model1.reshape(-1, 1),
+         res_model2.reshape(-1, 1)], axis=1)
+
+    ens_model2 = np.concatenate(
+        [res_model3.reshape(-1, 1),
+         res_model4.reshape(-1, 1),
+         res_model5.reshape(-1, 1)], axis=1)
+
+    ens_pred1 = np.concatenate(
+        [pred_model1.reshape(-1, 1),
+         pred_model2.reshape(-1, 1)], axis=1)
+
+    ens_pred2 = np.concatenate(
+        [pred_model3.reshape(-1, 1),
+         pred_model4.reshape(-1, 1),
+         pred_model5.reshape(-1, 1)], axis=1)
+
+    from xgboost import XGBClassifier as xgb
+    clf = xgb()
+    preds_mid1 = clf.fit(ens_model1, labels).predict(ens_pred1)
+    res_model_mid1 = cross_val_predict(clf, ens_model1, labels, cv=kfold)
+
+    preds_mid2 = clf.fit(ens_model2, labels).predict(ens_pred2)
+    res_model_mid2 = cross_val_predict(clf, ens_model2, labels, cv=kfold)
+
+    ens_model_final = np.concatenate(
+        [res_model_mid1.reshape(-1, 1),
+         res_model_mid2.reshape(-1, 1)], axis=1)
+
+    ens_pred_final = np.concatenate(
+        [preds_mid1.reshape(-1, 1),
+         preds_mid2.reshape(-1, 1)], axis=1)
+
+    #warnings.filterwarnings("ignore")
+
+    print('Original')
+    print('##################################')
+    models_perform(df_train, labels, df_test, labels_test)
+
+    print('')
+    print('PCA')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        pca_train, pca_test = MyFeatureSelection.applyPCA(df_train, df_test, n_dim)
+        models_perform(pca_train, labels, pca_test, labels_test)
+
+    print('')
+    print('ICA')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim)
+        models_perform(ica_train, labels, ica_test, labels_test)
+
+    print('')
+    print('ICA')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim)
+        models_perform(ica_train, labels, ica_test, labels_test)
+
+    print('')
+    print('INFO GAIN SELECTION')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        ig_train, ig_test = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, n_dim)
+        models_perform(ig_train, labels, ig_test, labels_test)
+
+    print('')
+    print('ANOVA SELECTION')
+    print('##################################')
+    for n_dim in range(8, len(df_train.columns)):
+        print('')
+        print(n_dim, ' dimensions:')
+        an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim)
+        models_perform(an_train, labels, an_test, labels_test)
 
     from sklearn.linear_model import LogisticRegression
     #clf = LogisticRegression()
