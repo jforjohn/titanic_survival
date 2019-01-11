@@ -17,7 +17,7 @@ def k_nearest_neighbors(data, labels, train_fidx, validation_fidx):
     w = MyFeatureSelection.compute_weights_relief(data,labels)
 
     knn = KNeighborsClassifier(
-        n_neighbors=13
+        '''n_neighbors=13'''
     )
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
@@ -35,7 +35,8 @@ def weighted_k_nearest_neighbors(data, labels, train_fidx, validation_fidx):
     w = MyFeatureSelection.compute_weights_info_gain(data, labels)
 
     knn = KNeighborsClassifier(
-        n_neighbors=9, metric=mydist, metric_params={"w": w}
+        #n_neighbors=9,
+        metric=mydist, metric_params={"w": w}
     )
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):

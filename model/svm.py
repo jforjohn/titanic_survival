@@ -5,9 +5,9 @@ from statistics import mean
 
 def svm(data, labels, train_fidx, validation_fidx):
     svc = SVC(
-        C=3,
+        ''' C=3,
         kernel='linear',
-        gamma='auto'
+        gamma='auto '''
     )
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):
