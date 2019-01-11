@@ -101,12 +101,14 @@ if __name__ == '__main__':
     if df_train.shape[1] != df_test.shape[1]:
         missing_cols = set(df_test.columns) - set(df_train.columns)
         for col in missing_cols:
-            df_train[col] = np.zeros([df_train.shape[0], 1])
+            #df_train[col] = np.zeros([df_train.shape[0], 1])
+            df_test.drop([col], axis=1, inplace=True)
 
         missing_cols = set(df_train.columns) - set(df_test.columns)
         for col in missing_cols:
             print(df_train.shape, df_test.shape)
-            df_test[col] = np.zeros([df_test.shape[0], 1])
+            #df_test[col] = np.zeros([df_test.shape[0], 1])
+            df_train.drop([col], axis=1, inplace=True)
 
     labels_test = testPreprocess.labels_
     '''
@@ -263,8 +265,13 @@ if __name__ == '__main__':
         [preds_mid1.reshape(-1, 1),
          preds_mid2.reshape(-1, 1)], axis=1)
 
-    #warnings.filterwarnings("ignore")
+    from sklearn.linear_model import LogisticRegression
+    #clf = LogisticRegression()
+    preds = clf.fit(ens_model_final, labels).predict(ens_pred_final)
+    acc = accuracy_score(labels_test, preds)
+    print(acc)
     '''
+    #warnings.filterwarnings("ignore")
     print('Original')
     print('##################################')
     models_perform(df_train, labels, df_test, labels_test)
@@ -272,6 +279,7 @@ if __name__ == '__main__':
     print('')
     print('PCA')
     print('##################################')
+
     for n_dim in range(8, len(df_train.columns)):
         print('')
         print(n_dim, ' dimensions:')
@@ -314,8 +322,3 @@ if __name__ == '__main__':
         an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim)
         models_perform(an_train, labels, an_test, labels_test)
 
-    from sklearn.linear_model import LogisticRegression
-    #clf = LogisticRegression()
-    preds = clf.fit(ens_model_final, labels).predict(ens_pred_final)
-    acc = accuracy_score(labels_test, preds)
-    print(acc)
