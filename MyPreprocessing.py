@@ -187,7 +187,7 @@ class MyPreprocessing:
         # titanicAll dataset doesn't have PassengerId column
         if 'PassengerId' in data.columns:
             df.drop(['PassengerId'], axis=1, inplace=True)
-        df.drop(['Name', 'Ticket', 'Fare'], axis=1, inplace=True)
+        df.drop(['Name', 'Ticket'], axis=1, inplace=True)
 
         df_num = df.select_dtypes(exclude='object')
         df_obj = df.select_dtypes(include='object')
