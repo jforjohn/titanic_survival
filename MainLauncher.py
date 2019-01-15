@@ -34,7 +34,7 @@ def getData(path, filenames_type):
     df_features = pd.read_csv(path + filename + '.csv',
                            sep=',')
 
-    if filename not in ['train', 'test']:
+    if filenames_type not in ['train', 'test']:
         # drop unnecessary columns that don't exist in the official dataset
         df_features.drop(['Boat', 'Body', 'Home.dest'],
                           axis=1,
