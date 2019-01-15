@@ -1,3 +1,6 @@
+import numpy as np
+from collections import Counter
+
 # Outlier detection
 
 def detect_outliers(df, n, features):
