@@ -25,7 +25,7 @@ def models_perform(data, data_labels, test, test_labels):
     # returns the model trained with the totality of the training data.
     models = list()
     # Multilayer perceptron
-    #models.append(mlp(data, data_labels, train_idx, validation_idx))
+    models.append(mlp(data, data_labels, train_idx, validation_idx))
     # Support Vector Machine
     models.append(svm(data, data_labels, train_idx, validation_idx))
     # Random Forest
@@ -35,7 +35,7 @@ def models_perform(data, data_labels, test, test_labels):
     # KNN
     models.append(k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
     # Weighted KNN
-    models.append(weighted_k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
+    #models.append(weighted_k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
 
     #LDA
     models.append(LDA(data, data_labels, train_idx, validation_idx))
