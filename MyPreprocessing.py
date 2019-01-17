@@ -198,7 +198,8 @@ class MyPreprocessing:
         # Remove columns
         # titanicAll dataset doesn't have PassengerId column
         if 'PassengerId' in df_num.columns:
-            df_num.drop(['PassengerId'], axis=1, inplace=True)
+            # pclass was needed at the end so it was not made as an object in the beginning
+            df_num.drop(['PassengerId', 'Pclass'], axis=1, inplace=True)
         #df_obj.drop(df_obj.columns, axis=1, inplace=True)
 
         if df_num.size > 0:
