@@ -70,13 +70,13 @@ if __name__ == '__main__':
     ## train
     trainData = getData(path, filename_type)
     # Preprocessing
-    trainPreprocess = MyPreprocessing(filename_type)
+    trainPreprocess = MyPreprocessing('all')
 
     ## test
     filename_type = 'test'
     testData = getData(path, filename_type)
     # Preprocessing
-    testPreprocess = MyPreprocessing(filename_type)
+    testPreprocess = MyPreprocessing('all')
 
     ## Data Understanding
     if verbose == 'true':
@@ -106,219 +106,10 @@ if __name__ == '__main__':
 
         missing_cols = set(df_train.columns) - set(df_test.columns)
         for col in missing_cols:
-            print(df_train.shape, df_test.shape)
             #df_test[col] = np.zeros([df_test.shape[0], 1])
             df_train.drop([col], axis=1, inplace=True)
 
     labels_test = testPreprocess.labels_
-    '''
-    print()
-    print('Train set sample')
-    print(df_train.head())
-    print()
-    print('Test set sample')
-    print(df_test.head())
-    '''
-    ##
-    start = time()
 
-    #models_perform(df_train, labels, df_test, labels_test)
-    '''
-    from sklearn.model_selection import KFold, cross_val_predict
-    from sklearn.svm import SVC
-    from sklearn.metrics import accuracy_score
-
-    kfold = KFold(n_splits=10)
-
-    clf = svc = SVC(
-        C=3,
-        kernel='rbf',
-        gamma='scale'
-    )
-
-    pred_model1 = clf.fit(df_train,labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model1)
-    print(acc)
-    res_model1 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    from sklearn.neural_network import MLPClassifier
-
-    clf = MLPClassifier(
-        activation='relu',
-        solver='adam',
-        learning_rate_init=0.0001,
-        momentum=0.9,
-        hidden_layer_sizes=(10, 50, 30, 40, 20),
-        max_iter=750,
-        random_state=42
-    )
-    pred_model2 = clf.fit(df_train, labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model2)
-    print(acc)
-    res_model2 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    from sklearn.ensemble import AdaBoostClassifier as ab
-    clf = ab(learning_rate=0.5,
-             n_estimators=300)
-    pred_model3 = clf.fit(df_train, labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model3)
-    print(acc)
-    res_model3 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    from sklearn.ensemble import RandomForestClassifier
-    clf = RandomForestClassifier(
-        n_estimators=10
-    )
-    pred_model4 = clf.fit(df_train, labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model4)
-    print(acc)
-    res_model4 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    from sklearn.ensemble import GradientBoostingClassifier
-    clf = GradientBoostingClassifier()
-    pred_model5 = clf.fit(df_train, labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model5)
-    print(acc)
-    res_model5 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    ens_model1 = np.concatenate(
-        [res_model1.reshape(-1, 1),
-         res_model2.reshape(-1, 1)], axis=1)
-
-    ens_model2 = np.concatenate(
-        [res_model3.reshape(-1, 1),
-         res_model4.reshape(-1, 1),
-         res_model5.reshape(-1, 1)], axis=1)
-
-    ens_pred1 = np.concatenate(
-        [pred_model1.reshape(-1, 1),
-         pred_model2.reshape(-1, 1)], axis=1)
-
-    ens_pred2 = np.concatenate(
-        [pred_model3.reshape(-1, 1),
-         pred_model4.reshape(-1, 1),
-         pred_model5.reshape(-1, 1)], axis=1)
-
-    from xgboost import XGBClassifier as xgb
-    clf = xgb()
-    preds_mid1 = clf.fit(ens_model1, labels).predict(ens_pred1)
-    res_model_mid1 = cross_val_predict(clf, ens_model1, labels, cv=kfold)
-
-    preds_mid2 = clf.fit(ens_model2, labels).predict(ens_pred2)
-    res_model_mid2 = cross_val_predict(clf, ens_model2, labels, cv=kfold)
-
-    ens_model_final = np.concatenate(
-        [res_model_mid1.reshape(-1, 1),
-         res_model_mid2.reshape(-1, 1)], axis=1)
-
-    ens_pred_final = np.concatenate(
-        [preds_mid1.reshape(-1, 1),
-         preds_mid2.reshape(-1, 1)], axis=1)
-
-    from sklearn.ensemble import RandomForestClassifier
-    clf = RandomForestClassifier(
-        n_estimators=10
-    )
-    pred_model4 = clf.fit(df_train, labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model4)
-    print(acc)
-    res_model4 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    from sklearn.ensemble import GradientBoostingClassifier
-    clf = GradientBoostingClassifier()
-    pred_model5 = clf.fit(df_train, labels).predict(df_test)
-    acc = accuracy_score(labels_test, pred_model5)
-    print(acc)
-    res_model5 = cross_val_predict(clf, df_train, labels, cv=kfold)
-
-    ens_model1 = np.concatenate(
-        [res_model1.reshape(-1, 1),
-         res_model2.reshape(-1, 1)], axis=1)
-
-    ens_model2 = np.concatenate(
-        [res_model3.reshape(-1, 1),
-         res_model4.reshape(-1, 1),
-         res_model5.reshape(-1, 1)], axis=1)
-
-    ens_pred1 = np.concatenate(
-        [pred_model1.reshape(-1, 1),
-         pred_model2.reshape(-1, 1)], axis=1)
-
-    ens_pred2 = np.concatenate(
-        [pred_model3.reshape(-1, 1),
-         pred_model4.reshape(-1, 1),
-         pred_model5.reshape(-1, 1)], axis=1)
-
-    from xgboost import XGBClassifier as xgb
-    clf = xgb()
-    preds_mid1 = clf.fit(ens_model1, labels).predict(ens_pred1)
-    res_model_mid1 = cross_val_predict(clf, ens_model1, labels, cv=kfold)
-
-    preds_mid2 = clf.fit(ens_model2, labels).predict(ens_pred2)
-    res_model_mid2 = cross_val_predict(clf, ens_model2, labels, cv=kfold)
-
-    ens_model_final = np.concatenate(
-        [res_model_mid1.reshape(-1, 1),
-         res_model_mid2.reshape(-1, 1)], axis=1)
-
-    ens_pred_final = np.concatenate(
-        [preds_mid1.reshape(-1, 1),
-         preds_mid2.reshape(-1, 1)], axis=1)
-
-    from sklearn.linear_model import LogisticRegression
-    #clf = LogisticRegression()
-    preds = clf.fit(ens_model_final, labels).predict(ens_pred_final)
-    acc = accuracy_score(labels_test, preds)
-    print(acc)
-    '''
-    #warnings.filterwarnings("ignore")
-    print('Original')
-    print('##################################')
-    models_perform(df_train, labels, df_test, labels_test)
-
-    print('')
-    print('PCA')
-    print('##################################')
-
-    for n_dim in range(8, len(df_train.columns)):
-        print('')
-        print(n_dim, ' dimensions:')
-        pca_train, pca_test = MyFeatureSelection.applyPCA(df_train, df_test, n_dim)
-        models_perform(pca_train, labels, pca_test, labels_test)
-
-    print('')
-    print('ICA')
-    print('##################################')
-    for n_dim in range(8, len(df_train.columns)):
-        print('')
-        print(n_dim, ' dimensions:')
-        ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim)
-        models_perform(ica_train, labels, ica_test, labels_test)
-
-    print('')
-    print('ICA')
-    print('##################################')
-    for n_dim in range(8, len(df_train.columns)):
-        print('')
-        print(n_dim, ' dimensions:')
-        ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim)
-        models_perform(ica_train, labels, ica_test, labels_test)
-
-    print('')
-    print('INFO GAIN SELECTION')
-    print('##################################')
-    for n_dim in range(8, len(df_train.columns)):
-        print('')
-        print(n_dim, ' dimensions:')
-        ig_train, ig_test = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, n_dim)
-        models_perform(ig_train, labels, ig_test, labels_test)
-
-    print('')
-    print('ANOVA SELECTION')
-    print('##################################')
-    for n_dim in range(8, len(df_train.columns)):
-        print('')
-        print(n_dim, ' dimensions:')
-        an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim)
-        models_perform(an_train, labels, an_test, labels_test)
-
+    print(df_train.columns, df_test.columns)
+    print(df_train.shape, df_test.shape)
