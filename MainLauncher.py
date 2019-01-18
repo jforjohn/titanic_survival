@@ -117,3 +117,27 @@ if __name__ == '__main__':
 
     print(df_train.columns, df_test.columns)
     print(df_train.shape, df_test.shape)
+
+    '''
+    Best Feature Selection technique for each model:
+                                        Accuracy    Time
+    LR_d_45/49RandomForestClassifier	0.823334	0.021874
+    ALL_49_XGBClassifier				0.822198	0.140709
+    ALL_49_SVC							0.821009	0.033901
+    ALL_49_LinearDiscriminantAnalysis	0.814099	0.018390
+    ALL_49_KNeighborsClassifier			0.807196	0.015391
+    AN_d_35/49MLPClassifier				0.808332	3.984188
+    PCA_d_16/49_ev_0.885_MyIBL			0.778334	2.536446
+    '''
+
+    # LR - Lasso Regression Feature Selection - chooses 45 dimensions
+    alpha = 0.00001
+    lr_train, lr_test = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha)
+
+    # PCA - 16 dimensions
+    n_dim = 16
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim)
+
+    # AN - Anova Selection
+    an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim)
+
