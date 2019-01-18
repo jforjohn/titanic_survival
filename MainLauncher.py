@@ -71,7 +71,8 @@ if __name__ == '__main__':
     trainData = getData(path, filename_type)
     # Preprocessing
     trainPreprocess = MyPreprocessing(process_type='all',
-                                      filename_type=filename_type)
+                                      filename_type=filename_type,
+                                      remove_outliers=True)
 
     ## test
     filename_type = 'test'

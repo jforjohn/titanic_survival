@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing
 from detect_outliers import detect_outliers
+from math import ceil
 import matplotlib.pyplot as plt
 
 
@@ -102,14 +103,6 @@ class MyPreprocessing:
             df = self.handleMissingValues(df)
             title = df.Title
             df.drop(['Title'], axis=1, inplace=True)
-
-        if self.remove_outliers and self.filename_type == 'train':
-            Outliers_to_drop = detect_outliers(df, 2, ["Age", "SibSp", "Parch", "Fare"])
-            print('Number of outliers', len(Outliers_to_drop))
-            df.drop(Outliers_to_drop, axis=0, inplace=True)
-            df = df.reset_index(drop=True)
-            self.labels_.drop(Outliers_to_drop, axis=0, inplace=True)
-            self.labels_ = self.labels_.reset_index(drop=True)
 
         if self.process_type in ['standard', 'categorized', 'all']:
             # Title
@@ -214,6 +207,20 @@ class MyPreprocessing:
             # pclass was needed at the end so it was not made as an object in the beginning
             df_num.drop(['PassengerId', 'Pclass'], axis=1, inplace=True)
         #df_obj.drop(df_obj.columns, axis=1, inplace=True)
+
+        self.removed_outliers = (0,0)
+        if self.remove_outliers and self.filename_type == 'train':
+            Outliers_to_drop = detect_outliers(df_num,
+                                               ceil(0.2*df_num.shape[1]),
+                                               df_num.columns)
+
+            th = 0.15 * df_num.shape[0]
+            self.removed_outliers = (len(Outliers_to_drop), th)
+            if self.removed_outliers[0] < self.removed_outliers[1]:
+                df_num.drop(Outliers_to_drop, axis=0, inplace=True)
+                df_num = df_num.reset_index(drop=True)
+                self.labels_.drop(Outliers_to_drop, axis=0, inplace=True)
+                self.labels_ = self.labels_.reset_index(drop=True)
 
         if df_num.size > 0:
             min_max_scaler = preprocessing.MinMaxScaler()
