@@ -117,3 +117,28 @@ if __name__ == '__main__':
 
     print(df_train.columns, df_test.columns)
     print(df_train.shape, df_test.shape)
+
+    '''
+    Best Feature Selection technique for each model:
+                                        Accuracy    Time
+    ALL_49_XGBClassifier					0.822198	0.148959
+    ALL_49_SVC								0.821009	0.036744
+    ICA_d_25/49RandomForestClassifier		0.817587	0.023186
+    ALL_49_LinearDiscriminantAnalysis		0.814099	0.018538
+    ALL_49_KNeighborsClassifier				0.807196	0.014191
+    PCA_d_20/49_ev_0.932_MLPClassifier		0.807176	3.611699
+    RF_d_25/49MyIBL							0.778340	2.562606
+    '''
+
+    # RF - Random Forest Estimator for  Feature Selection - chooses 25 dimensions - for feeding IB2
+    num_estimators = 100
+    rf_train, rf_test = MyFeatureSelection.RandomForestSelection(df_train, df_test, labels, num_estimators)
+
+    # ICA - 25 dimensions - for feeding Random Forest Classifier
+    n_dim_ICA = 25
+    ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim_ICA)
+
+    # PCA - 20 dimensions - for feeding MLP
+    n_dim_PCA = 20
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim_PCA)
+

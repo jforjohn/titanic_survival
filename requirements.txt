@@ -8,3 +8,4 @@ scipy
 seaborn
 matplotlib
 sklearn_relief
+statsmodels
