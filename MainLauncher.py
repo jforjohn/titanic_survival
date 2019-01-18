@@ -121,24 +121,24 @@ if __name__ == '__main__':
     '''
     Best Feature Selection technique for each model:
                                         Accuracy    Time
-    LR_d_45/49RandomForestClassifier	0.823334	0.021874
-    ALL_49_XGBClassifier				0.822198	0.140709
-    ALL_49_SVC							0.821009	0.033901
-    ALL_49_LinearDiscriminantAnalysis	0.814099	0.018390
-    ALL_49_KNeighborsClassifier			0.807196	0.015391
-    AN_d_35/49MLPClassifier				0.808332	3.984188
-    PCA_d_16/49_ev_0.885_MyIBL			0.778334	2.536446
+    ALL_49_XGBClassifier					0.822198	0.148959
+    ALL_49_SVC								0.821009	0.036744
+    ICA_d_25/49RandomForestClassifier		0.817587	0.023186
+    ALL_49_LinearDiscriminantAnalysis		0.814099	0.018538
+    ALL_49_KNeighborsClassifier				0.807196	0.014191
+    PCA_d_20/49_ev_0.932_MLPClassifier		0.807176	3.611699
+    RF_d_25/49MyIBL							0.778340	2.562606
     '''
 
-    # LR - Lasso Regression Feature Selection - chooses 45 dimensions
-    alpha = 0.00001
-    lr_train, lr_test = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha)
+    # RF - Random Forest Estimator for  Feature Selection - chooses 25 dimensions - for feeding IB2
+    num_estimators = 100
+    rf_train, rf_test = MyFeatureSelection.RandomForestSelection(df_train, df_test, labels, num_estimators)
 
-    # PCA - 16 dimensions
-    n_dim_PCA = 16
+    # ICA - 25 dimensions - for feeding Random Forest Classifier
+    n_dim_ICA = 25
+    ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim_ICA)
+
+    # PCA - 20 dimensions - for feeding MLP
+    n_dim_PCA = 20
     pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim_PCA)
-
-    # AN - Anova Selection
-    n_dim_an = 35
-    an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim_an)
 
