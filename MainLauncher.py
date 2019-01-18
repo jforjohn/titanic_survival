@@ -70,13 +70,16 @@ if __name__ == '__main__':
     ## train
     trainData = getData(path, filename_type)
     # Preprocessing
-    trainPreprocess = MyPreprocessing('all')
+    trainPreprocess = MyPreprocessing(process_type='all',
+                                      filename_type=filename_type)
 
     ## test
     filename_type = 'test'
     testData = getData(path, filename_type)
     # Preprocessing
-    testPreprocess = MyPreprocessing('all')
+    testPreprocess = MyPreprocessing(process_type='all',
+                                     filename_type=filename_type,
+                                     remove_outliers=False)
 
     ## Data Understanding
     if verbose == 'true':

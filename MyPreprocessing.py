@@ -3,11 +3,14 @@ from scipy.io.arff import loadarff
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing
+from detect_outliers import detect_outliers
 import matplotlib.pyplot as plt
 
 
 class MyPreprocessing:
-    def __init__(self, process_type='all'):
+    def __init__(self, process_type='all',
+                 filename_type='train',
+                 remove_outliers=True):
         pd.set_option('display.max_rows', 500)
         pd.set_option('display.max_columns', 500)
         pd.set_option('display.width', 1000)
@@ -16,6 +19,8 @@ class MyPreprocessing:
         # 'noprocess', 'standard', 'categorized', 'all'
         self.process_type = process_type
         self.process_types = ['noprocess', 'standard', 'categorized', 'all']
+        self.remove_outliers = remove_outliers
+        self.filename_type = filename_type
         self.new_df = pd.DataFrame()
 
 
@@ -97,6 +102,14 @@ class MyPreprocessing:
             df = self.handleMissingValues(df)
             title = df.Title
             df.drop(['Title'], axis=1, inplace=True)
+
+        if self.remove_outliers and self.filename_type == 'train':
+            Outliers_to_drop = detect_outliers(df, 2, ["Age", "SibSp", "Parch", "Fare"])
+            print('Number of outliers', len(Outliers_to_drop))
+            df.drop(Outliers_to_drop, axis=0, inplace=True)
+            df = df.reset_index(drop=True)
+            self.labels_.drop(Outliers_to_drop, axis=0, inplace=True)
+            self.labels_ = self.labels_.reset_index(drop=True)
 
         if self.process_type in ['standard', 'categorized', 'all']:
             # Title
