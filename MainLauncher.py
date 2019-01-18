@@ -135,9 +135,10 @@ if __name__ == '__main__':
     lr_train, lr_test = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha)
 
     # PCA - 16 dimensions
-    n_dim = 16
-    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim)
+    n_dim_PCA = 16
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim_PCA)
 
     # AN - Anova Selection
-    an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim)
+    n_dim_an = 35
+    an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, n_dim_an)
 
