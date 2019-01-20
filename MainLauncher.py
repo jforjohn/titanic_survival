@@ -157,7 +157,7 @@ if __name__ == '__main__':
     alpha_LDA = 0.0009
     lr_train_LDA, lr_test_LDA = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha_LDA)
 
-    # ICA - ICA for  Feature Selection - chooses 45 dimensions - for feeding MLP
+    # ICA - ICA for  Feature Selection - chooses 20 dimensions - for feeding MLP
     num_dim_ICA = 20
     ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, num_dim_ICA)
 
@@ -166,7 +166,7 @@ if __name__ == '__main__':
     pca_train, pca_test = MyFeatureSelection.applyPCA(df_train, df_test, num_dim_PCA)
 
     # AN - AN for  Feature Selection - chooses 35 dimensions - for feeding IBL
-    num_dim_AN = 19
+    num_dim_AN = 35
     an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, num_dim_AN)
 
     '''
