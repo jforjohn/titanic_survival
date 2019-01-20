@@ -43,39 +43,16 @@ def getData(path, filenames_type):
     df_features = pd.read_csv(path + filename + '.csv',
                            sep=',')
 
-    if filenames_type not in ['train', 'test']:
-        # drop unnecessary columns that don't exist in the official dataset
-        df_features.drop(['Boat', 'Body', 'Home.dest'],
-                          axis=1,
-                         inplace=True)
     #labels = df_features['Survived']
     #df_features = df_features.drop(['Survived'], axis=1)
     return df_features
 ##
 if __name__ == '__main__':
     ##
-    # Loads config
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-c", "--config", default="titanic.cfg",
-        help="specify the location of the clustering config file"
-    )
-    args, _ = parser.parse_known_args()
-
-    config_file = args.config
-    config = load(config_file)
-
-    ##
-    verbose = config.get('titanic', 'verbose')
-    path = config.get('titanic', 'path') + '/'
-    file_type = config.get('titanic', 'file_type')
+    verbose = False
+    path = 'data/'
 
     filename_type = 'train'
-    if file_type == 'all':
-        filename_type = 'other'
-
-    print('Filename type:', filename_type)
-    print()
     ## train
     trainData = getData(path, filename_type)
     # Preprocessing
@@ -121,8 +98,6 @@ if __name__ == '__main__':
         for col in missing_cols:
             #df_test[col] = np.zeros([df_test.shape[0], 1])
             df_train.drop([col], axis=1, inplace=True)
-
-    labels_test = testPreprocess.labels_
 
     print(df_train.columns, df_test.columns)
     print(df_train.shape, df_test.shape)
