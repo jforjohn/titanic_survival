@@ -24,6 +24,8 @@ from xgboost import XGBClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
+import os
+
 
 
 def getData(path, filenames_type):
@@ -140,6 +142,9 @@ if __name__ == '__main__':
     AN_d_35/49MyIBL								0.757925	2.434744
     '''
 
+    #Create file for submission files to Kaggle
+    if not os.path.exists('./submissions'):
+        os.makedirs('./submissions')
 
     # AN - AN for  Feature Selection - chooses 35 dimensions - for feeding IBL
     num_dim_AN = 35
