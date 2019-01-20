@@ -14,7 +14,7 @@ def mydist(x, y, w):
 
 def k_nearest_neighbors(data, labels, train_fidx, validation_fidx):
 
-    knn = KNeighborsClassifier(algorithm='brute', metric='euclidean', n_neighbors=9, weights='uniform')
+    knn = KNeighborsClassifier(algorithm='auto', metric='manhattan', n_neighbors=13, weights='uniform')
     #n_neighbors=13
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):

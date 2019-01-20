@@ -141,77 +141,53 @@ if __name__ == '__main__':
     '''
 
 
-    # IG - Information Gain for  Feature Selection - chooses 45 dimensions - for feeding SVC
-    num_dim_IG_SVC = 45
-    ig_train_SVC, ig_test_SVC = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, num_dim_IG_SVC)
-
-    # IG - Information Gain for  Feature Selection - chooses 25 dimensions - for feeding Random Forest
-    num_dim_IG_RF = 25
-    IG_train_RF, ig_test_RF = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, num_dim_IG_RF)
-
-    # LR - Lasso Regression for  Feature Selection - chooses 18 dimensions - for feeding XGBoost
-    alpha_XGB = 0.003
-    lr_train_XGB, lr_test_XGB = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha_XGB)
-
-    # LR - Lasso Regression for  Feature Selection - chooses 30 dimensions - for feeding LDA
-    alpha_LDA = 0.0009
-    lr_train_LDA, lr_test_LDA = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha_LDA)
-
-    # ICA - ICA for  Feature Selection - chooses 20 dimensions - for feeding MLP
-    num_dim_ICA = 20
-    ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, num_dim_ICA)
-
-
-    # PCA - PCA for  Feature Selection - chooses 19 dimensions - for feeding KNN
-    num_dim_PCA = 19
-    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, num_dim_PCA)
-
-
     # AN - AN for  Feature Selection - chooses 35 dimensions - for feeding IBL
     num_dim_AN = 35
     an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, num_dim_AN)
-
-    '''
-    # AN - Anova Selection for  Feature Selection - chooses 10 dimensions - for feeding IB2
-    num_dim_AN = 10
-    an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, num_dim_AN)
-    ibl = MyIBL(n_neighbors=9, ibl_algo='ib2', voting='mp', distance='euclidean')
+    ibl = MyIBL(n_neighbors=13, ibl_algo='ib2', voting='mvs', distance='euclidean')
     ibl.fit(an_train, labels)
     pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": ibl.predict(an_test)}).to_csv(
         './submissions/ibl.csv', index=False)
 
-    # ICA - 20 dimensions - for feeding Random Forest Classifier
-    n_dim_ICA = 20
-    ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim_ICA)
-    rfc = RandomForestClassifier(criterion='gini', max_depth=90, max_features='log2', min_samples_leaf=5, min_samples_split=8, n_estimators=200)
-    rfc.fit(ica_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": rfc.predict(ica_test)}).to_csv('./submissions/rfc.csv', index=False)
+    # IG - Information Gain for  Feature Selection - chooses 25 dimensions - for feeding Random Forest
+    num_dim_IG_RF = 25
+    IG_train_RF, ig_test_RF = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, num_dim_IG_RF)
+    rfc = RandomForestClassifier(criterion='gini', max_depth=80, max_features='log2', min_samples_leaf=3, min_samples_split=10, n_estimators=100)
+    rfc.fit(IG_train_RF, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": rfc.predict(ig_test_RF)}).to_csv('./submissions/rfc.csv', index=False)
 
-    # PCA - 17 dimensions - for feeding MLP
-    n_dim_PCA = 17
-    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim_PCA)
-    net = MLPClassifier(max_iter=1000, activation='tanh', hidden_layer_sizes=14, learning_rate='constant', learning_rate_init=0.1, solver='sgd')
-    net.fit(pca_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": net.predict(pca_test)}).to_csv('./submissions/mlp.csv', index=False)
+    # ICA - ICA for  Feature Selection - chooses 20 dimensions - for feeding MLP
+    num_dim_ICA = 20
+    ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, num_dim_ICA)
+    net = MLPClassifier(max_iter=1000, activation='relu', hidden_layer_sizes=11, learning_rate='invscaling', learning_rate_init=0.001, solver='lbfgs')
+    net.fit(ica_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": net.predict(ica_test)}).to_csv('./submissions/mlp.csv', index=False)
 
+    # LR - Lasso Regression for  Feature Selection - chooses 18 dimensions - for feeding XGBoost
+    alpha_XGB = 0.003
+    lr_train_XGB, lr_test_XGB = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha_XGB)
+    xgb = XGBClassifier(colsample_bytree=0.5, learning_rate=0.1, max_depth=6, n_estimators=150, objective='binary:logistic', subsample=0.6)
+    xgb.fit(lr_train_XGB, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": xgb.predict(lr_test_XGB)}).to_csv('./submissions/xgb.csv', index=False)
 
-    # Other
-    xgb = XGBClassifier(colsample_bytree=0.6, learning_rate=0.1, max_depth=4, n_estimators=350, objective='binary:logistic', subsample=0.5)
-    xgb.fit(df_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": xgb.predict(df_test)}).to_csv('./submissions/xgb.csv', index=False)
-
-
+    # LR - Lasso Regression for  Feature Selection - chooses 30 dimensions - for feeding LDA
+    alpha_LDA = 0.0009
+    lr_train_LDA, lr_test_LDA = MyFeatureSelection.LassoRegressionSelection(df_train, df_test, labels, alpha_LDA)
     lda = LinearDiscriminantAnalysis()
-    lda.fit(df_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": lda.predict(df_test)}).to_csv('./submissions/lda.csv', index=False)
+    lda.fit(lr_train_LDA, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": lda.predict(lr_test_LDA)}).to_csv('./submissions/lda.csv', index=False)
 
-
+    # IG - Information Gain for  Feature Selection - chooses 45 dimensions - for feeding SVC
+    num_dim_IG_SVC = 45
+    ig_train_SVC, ig_test_SVC = MyFeatureSelection.InfoGainSelection(df_train, df_test, labels, num_dim_IG_SVC)
     svc = SVC(C=1, gamma=0.1, kernel='rbf')
-    svc.fit(df_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": svc.predict(df_test)}).to_csv('./submissions/svc.csv', index=False)
+    svc.fit(ig_train_SVC, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": svc.predict(ig_test_SVC)}).to_csv('./submissions/svc.csv', index=False)
 
+    # PCA - PCA for  Feature Selection - chooses 19 dimensions - for feeding KNN
+    num_dim_PCA = 19
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, num_dim_PCA)
+    knn = KNeighborsClassifier(algorithm='auto', metric='manhattan', n_neighbors=13, weights='uniform')
+    knn.fit(pca_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": knn.predict(pca_test)}).to_csv('./submissions/knn.csv', index=False)
 
-    knn = KNeighborsClassifier(algorithm='brute', metric='euclidean', n_neighbors=9, weights='uniform')
-    knn.fit(df_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": knn.predict(df_test)}).to_csv('./submissions/knn.csv', index=False)
-    '''

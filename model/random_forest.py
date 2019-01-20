@@ -4,7 +4,7 @@ from statistics import mean
 
 
 def random_forest(data, labels, train_fidx, validation_fidx):
-    rfc = RandomForestClassifier(criterion='gini', max_depth=90, max_features='log2', min_samples_leaf=5, min_samples_split=8, n_estimators=200)
+    rfc = RandomForestClassifier(criterion='gini', max_depth=80, max_features='log2', min_samples_leaf=3, min_samples_split=10, n_estimators=100)
     #n_estimators=10
     folds_accuracy = list()
     for idx, trf in enumerate(train_fidx):

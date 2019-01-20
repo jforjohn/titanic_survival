@@ -42,7 +42,7 @@ configs = [
 
 
 def mlp(data, labels, train_fidx, validation_fidx):
-    net = MLPClassifier(max_iter=1000, activation='tanh', hidden_layer_sizes=14, learning_rate='constant', learning_rate_init=0.1, solver='sgd')
+    net = MLPClassifier(max_iter=1000, activation='relu', hidden_layer_sizes=11, learning_rate='invscaling', learning_rate_init=0.001, solver='lbfgs')
     '''
     activation='relu',
     solver='adam',
