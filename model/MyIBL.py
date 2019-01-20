@@ -369,7 +369,7 @@ class MyIBL:
         self.labels_ = np.array(pred)
         return self.labels_
 
-
+    @staticmethod
     def getBestIB2(data, labels):
         best_accuracy = 0
         best_params = None
@@ -384,7 +384,8 @@ class MyIBL:
         for dist in "euclidean", "canberra", "cosine":
             print("dist done")
             for vot in "mvs", "mp", "brd":
-                for k in range(2,18,2):
+                for k in range(1,16,2):
+                    print(k, dist)
                     folds_accuracy = list()
 
                     for idx, trf in enumerate(train_idx):
