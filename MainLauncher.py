@@ -126,7 +126,7 @@ if __name__ == '__main__':
     print(df_train.shape, df_test.shape)
 
     # Calculate validation accuracy
-    models_perform(df_train,labels,df_test,labels_test)
+    #models_perform(df_train,labels,df_test,labels_test)
 
     '''
     Best Feature Selection technique for each model:
@@ -161,9 +161,11 @@ if __name__ == '__main__':
     num_dim_ICA = 20
     ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, num_dim_ICA)
 
+
     # PCA - PCA for  Feature Selection - chooses 19 dimensions - for feeding KNN
     num_dim_PCA = 19
-    pca_train, pca_test = MyFeatureSelection.applyPCA(df_train, df_test, num_dim_PCA)
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, num_dim_PCA)
+
 
     # AN - AN for  Feature Selection - chooses 35 dimensions - for feeding IBL
     num_dim_AN = 35
