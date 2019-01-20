@@ -127,34 +127,35 @@ if __name__ == '__main__':
 
     '''
     Best Feature Selection technique for each model:
-                                        Accuracy    Time
-    ALL_49_XGBClassifier					0.822198	0.148959
-    ALL_49_SVC								0.821009	0.036744
-    ICA_d_25/49RandomForestClassifier		0.817587	0.023186
-    ALL_49_LinearDiscriminantAnalysis		0.814099	0.018538
-    ALL_49_KNeighborsClassifier				0.807196	0.014191
-    PCA_d_20/49_ev_0.932_MLPClassifier		0.807176	3.611699
-    RF_d_25/49MyIBL							0.778340	2.562606
+                                            Accuracy    Time
+    ALL_49_SVC								0.831092	0.032588
+    ALL_49_XGBClassifier					0.829963	0.150703
+    PCA_d_17/49_ev_0.914_MLPClassifier		0.824370	4.378282
+    ALL_49_KNeighborsClassifier				0.820974	0.014391
+    ALL_49_LinearDiscriminantAnalysis		0.815337	0.020188
+    ICA_d_20/49RandomForestClassifier		0.814226	0.024643
+    AN_d_10/49MyIBL							0.755647	2.650869
     '''
 
-    # RF - Random Forest Estimator for  Feature Selection - chooses 25 dimensions - for feeding IB2
-    num_estimators = 100
-    rf_train, rf_test = MyFeatureSelection.RandomForestSelection(df_train, df_test, labels, num_estimators)
-    ibl = MyIBL(n_neighbors=12, ibl_algo='ib2', voting='mvs', distance='canberra')
-    ibl.fit(rf_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": ibl.predict(rf_test)}).to_csv('./submissions/ibl.csv', index=False)
+    # AN - Anova Selection for  Feature Selection - chooses 10 dimensions - for feeding IB2
+    num_dim_AN = 10
+    an_train, an_test = MyFeatureSelection.AnovaSelection(df_train, df_test, labels, num_dim_AN)
+    ibl = MyIBL(n_neighbors=9, ibl_algo='ib2', voting='mp', distance='euclidean')
+    ibl.fit(an_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": ibl.predict(an_test)}).to_csv(
+        './submissions/ibl.csv', index=False)
 
     # ICA - 25 dimensions - for feeding Random Forest Classifier
-    n_dim_ICA = 25
+    n_dim_ICA = 20
     ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim_ICA)
-    rfc = RandomForestClassifier(criterion='gini', max_depth=90, max_features='log2', min_samples_leaf=7, min_samples_split=8, n_estimators=50)
+    rfc = RandomForestClassifier(criterion='gini', max_depth=90, max_features='log2', min_samples_leaf=5, min_samples_split=8, n_estimators=200)
     rfc.fit(ica_train, labels)
-    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": rfc.predict(rf_test)}).to_csv('./submissions/rfc.csv', index=False)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": rfc.predict(ica_test)}).to_csv('./submissions/rfc.csv', index=False)
 
     # PCA - 20 dimensions - for feeding MLP
-    n_dim_PCA = 20
+    n_dim_PCA = 19
     pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim_PCA)
-    net = MLPClassifier(max_iter=1000, activation='relu', hidden_layer_sizes=10, learning_rate='constant', learning_rate_init=0.1, solver='sgd')
+    net = MLPClassifier(max_iter=1000, activation='tanh', hidden_layer_sizes=14, learning_rate='constant', learning_rate_init=0.1, solver='sgd')
     net.fit(pca_train, labels)
     pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": net.predict(pca_test)}).to_csv('./submissions/mlp.csv', index=False)
 
@@ -178,4 +179,3 @@ if __name__ == '__main__':
     knn = KNeighborsClassifier(algorithm='brute', metric='euclidean', n_neighbors=9, weights='uniform')
     knn.fit(df_train, labels)
     pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": knn.predict(df_test)}).to_csv('./submissions/knn.csv', index=False)
-

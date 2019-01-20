@@ -7,9 +7,7 @@ from model.k_nearest_neighbors import k_nearest_neighbors
 from model.k_nearest_neighbors import weighted_k_nearest_neighbors
 from model.LDA import LDA
 from model.xgBoost import xgBoost
-
-
-
+from MyFeatureSelection import MyFeatureSelection
 
 
 def models_perform(data, data_labels, test, test_labels):
@@ -25,11 +23,15 @@ def models_perform(data, data_labels, test, test_labels):
     # returns the model trained with the totality of the training data.
     models = list()
     # Multilayer perceptron
-    models.append(mlp(data, data_labels, train_idx, validation_idx))
+    n_dim_PCA = 17
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(data, test, n_dim_PCA)
+    models.append(mlp(pca_train, data_labels, train_idx, validation_idx))
     # Support Vector Machine
     models.append(svm(data, data_labels, train_idx, validation_idx))
     # Random Forest
-    models.append(random_forest(data, data_labels, train_idx, validation_idx))
+    n_dim_ICA = 20
+    ica_train, ica_test = MyFeatureSelection.applyICA(data, test, n_dim_ICA)
+    models.append(random_forest(ica_train, data_labels, train_idx, validation_idx))
     # XG Boost
     models.append(xgBoost(data, data_labels, train_idx, validation_idx))
     # KNN
@@ -44,7 +46,7 @@ def models_perform(data, data_labels, test, test_labels):
 
 
 
-    models_compare(models, test, test_labels)
+    #models_compare(models, test, test_labels)
 
 def models_compare(models, test, test_labels):
     best_model = None
