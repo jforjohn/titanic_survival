@@ -23,24 +23,32 @@ def models_perform(data, data_labels, test, test_labels):
     # returns the model trained with the totality of the training data.
     models = list()
     # Multilayer perceptron
-    n_dim_PCA = 17
-    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(data, test, n_dim_PCA)
-    models.append(mlp(pca_train, data_labels, train_idx, validation_idx))
+    num_dim_ICA = 20
+    ica_train, ica_test = MyFeatureSelection.applyICA(data, test, num_dim_ICA)
+    models.append(mlp(ica_train, data_labels, train_idx, validation_idx))
     # Support Vector Machine
-    models.append(svm(data, data_labels, train_idx, validation_idx))
+    num_dim_IG_SVC = 45
+    ig_train_SVC, ig_test_SVC = MyFeatureSelection.InfoGainSelection(data, test, data_labels, num_dim_IG_SVC)
+    models.append(svm(ig_train_SVC, data_labels, train_idx, validation_idx))
     # Random Forest
-    n_dim_ICA = 20
-    ica_train, ica_test = MyFeatureSelection.applyICA(data, test, n_dim_ICA)
-    models.append(random_forest(ica_train, data_labels, train_idx, validation_idx))
+    num_dim_IG_RF = 25
+    IG_train_RF, ig_test_RF = MyFeatureSelection.InfoGainSelection(data, test, data_labels, num_dim_IG_RF)
+    models.append(random_forest(IG_train_RF, data_labels, train_idx, validation_idx))
     # XG Boost
-    models.append(xgBoost(data, data_labels, train_idx, validation_idx))
+    alpha_XGB = 0.003
+    lr_train_XGB, lr_test_XGB = MyFeatureSelection.LassoRegressionSelection(data, test, data_labels, alpha_XGB)
+    models.append(xgBoost(lr_train_XGB, data_labels, train_idx, validation_idx))
     # KNN
-    models.append(k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
+    num_dim_PCA = 19
+    pca_train, pca_test, ev = MyFeatureSelection.applyPCA(data, test, num_dim_PCA)
+    models.append(k_nearest_neighbors(pca_train, data_labels, train_idx, validation_idx))
     # Weighted KNN
     #models.append(weighted_k_nearest_neighbors(data, data_labels, train_idx, validation_idx))
 
     #LDA
-    models.append(LDA(data, data_labels, train_idx, validation_idx))
+    alpha_LDA = 0.0009
+    lr_train_LDA, lr_test_LDA = MyFeatureSelection.LassoRegressionSelection(data, test, data_labels, alpha_LDA)
+    models.append(LDA(lr_train_LDA, data_labels, train_idx, validation_idx))
 
     # AdaBoost
 
