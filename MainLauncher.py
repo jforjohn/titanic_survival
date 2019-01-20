@@ -102,8 +102,6 @@ if __name__ == '__main__':
     print(df_train.columns, df_test.columns)
     print(df_train.shape, df_test.shape)
 
-    # Calculate validation accuracy
-    #models_perform(df_train,labels,df_test,labels_test)
 
     '''
     Best Feature Selection technique for each model:
