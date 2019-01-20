@@ -4,7 +4,7 @@ from statistics import mean
 
 
 def svm(data, labels, train_fidx, validation_fidx):
-    svc = SVC()
+    svc = SVC(C=1, gamma=0.1, kernel='rbf')
     ''' C=3,
     kernel='linear',
     gamma='auto '''

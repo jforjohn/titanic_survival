@@ -12,8 +12,8 @@ from statistics import mean
 
 
 class MyIBL:
-    def __init__(self, n_neighbors=10, ibl_algo='ib2',
-                 voting='mvs', distance='euclidean', weights='uniform',
+    def __init__(self, n_neighbors=9, ibl_algo='ib2',
+                 voting='mp', distance='euclidean', weights='uniform',
                  *args, **kwargs):
         self.n_neighbors = n_neighbors
         self.voting = voting
