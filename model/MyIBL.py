@@ -6,7 +6,9 @@ from statsmodels.stats.proportion import proportion_confint
 
 from random import randint
 from collections import Counter
-
+from sklearn.model_selection import KFold
+from sklearn.metrics import accuracy_score
+from statistics import mean
 
 
 class MyIBL:
@@ -366,6 +368,39 @@ class MyIBL:
 
         self.labels_ = np.array(pred)
         return self.labels_
+
+
+    def getBestIB2(data, labels):
+        best_accuracy = 0
+        best_params = None
+
+        kf = KFold(n_splits=5)
+
+        folds = [(train_idx, validation_idx) for train_idx, validation_idx in kf.split(data)]
+        train_idx = [f[0] for f in folds]
+        validation_idx = [f[1] for f in folds]
+
+        best_accuracy = 0
+        for dist in "euclidean", "canberra", "cosine":
+            print("dist done")
+            for vot in "mvs", "mp", "brd":
+                for k in range(2,18,2):
+                    folds_accuracy = list()
+
+                    for idx, trf in enumerate(train_idx):
+                        ibl = MyIBL(n_neighbors=k, ibl_algo='ib2', voting=vot, distance=dist)
+                        ibl.fit(data.loc[trf], labels.loc[trf])
+                        prediction_labels = ibl.predict(data.loc[validation_idx[idx]])
+                        folds_accuracy.append(accuracy_score(labels.loc[validation_idx[idx]], prediction_labels))
+
+                    fold_accuracy_mean = mean(folds_accuracy)
+                    if fold_accuracy_mean > best_accuracy:
+                        best_accuracy = fold_accuracy_mean
+                        best_params = {'distance': dist, 'voting': vot, 'k': k}
+
+
+        print(best_params)
+        print(best_accuracy)
 '''
 data = np.array([[11,13],
                  [2,3],

@@ -17,6 +17,13 @@ from sklearn.decomposition import PCA
 from sklearn.decomposition import IncrementalPCA
 import matplotlib.pyplot as plt
 from model.models import models_perform
+from model.MyIBL import MyIBL
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
+from xgboost import XGBClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
 
 
 def getData(path, filenames_type):
@@ -133,12 +140,42 @@ if __name__ == '__main__':
     # RF - Random Forest Estimator for  Feature Selection - chooses 25 dimensions - for feeding IB2
     num_estimators = 100
     rf_train, rf_test = MyFeatureSelection.RandomForestSelection(df_train, df_test, labels, num_estimators)
+    ibl = MyIBL(n_neighbors=12, ibl_algo='ib2', voting='mvs', distance='canberra')
+    ibl.fit(rf_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": ibl.predict(rf_test)}).to_csv('./submissions/ibl.csv', index=False)
 
     # ICA - 25 dimensions - for feeding Random Forest Classifier
     n_dim_ICA = 25
     ica_train, ica_test = MyFeatureSelection.applyICA(df_train, df_test, n_dim_ICA)
+    rfc = RandomForestClassifier(criterion='gini', max_depth=90, max_features='log2', min_samples_leaf=7, min_samples_split=8, n_estimators=50)
+    rfc.fit(ica_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": rfc.predict(rf_test)}).to_csv('./submissions/rfc.csv', index=False)
 
     # PCA - 20 dimensions - for feeding MLP
     n_dim_PCA = 20
     pca_train, pca_test, ev = MyFeatureSelection.applyPCA(df_train, df_test, n_dim_PCA)
+    net = MLPClassifier(max_iter=1000, activation='relu', hidden_layer_sizes=10, learning_rate='constant', learning_rate_init=0.1, solver='sgd')
+    net.fit(pca_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": net.predict(pca_test)}).to_csv('./submissions/mlp.csv', index=False)
+
+
+    # Other
+    xgb = XGBClassifier(colsample_bytree=0.6, learning_rate=0.1, max_depth=4, n_estimators=350, objective='binary:logistic', subsample=0.5)
+    xgb.fit(df_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": xgb.predict(df_test)}).to_csv('./submissions/xgb.csv', index=False)
+
+
+    lda = LinearDiscriminantAnalysis()
+    lda.fit(df_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": lda.predict(df_test)}).to_csv('./submissions/lda.csv', index=False)
+
+
+    svc = SVC(C=1, gamma=0.1, kernel='rbf')
+    svc.fit(df_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": svc.predict(df_test)}).to_csv('./submissions/svc.csv', index=False)
+
+
+    knn = KNeighborsClassifier(algorithm='brute', metric='euclidean', n_neighbors=9, weights='uniform')
+    knn.fit(df_train, labels)
+    pd.DataFrame({"PassengerId": testData["PassengerId"], "Survived": knn.predict(df_test)}).to_csv('./submissions/knn.csv', index=False)
 
