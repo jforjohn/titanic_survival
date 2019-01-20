@@ -12,7 +12,7 @@ from statistics import mean
 
 
 class MyIBL:
-    def __init__(self, n_neighbors=10, ibl_algo='ib2',
+    def __init__(self, n_neighbors=13, ibl_algo='ib2',
                  voting='mvs', distance='euclidean', weights='uniform',
                  *args, **kwargs):
         self.n_neighbors = n_neighbors
